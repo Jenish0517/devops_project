@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevVroom | Premium Auto & Gear</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e63946;
+            --dark: #1a1a1a;
+            --light: #f4f4f4;
+            --white: #ffffff;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body { background-color: var(--light); color: var(--dark); overflow-x: hidden; }
+
+        /* Navigation */
+        nav {
+            background: var(--dark);
+            color: var(--white);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+
+        .nav-links { display: flex; list-style: none; gap: 20px; }
+        .nav-links a { color: var(--white); text-decoration: none; font-weight: 500; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary); }
+
+        .cart-icon { position: relative; cursor: pointer; font-size: 1.4rem; }
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--primary);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1350&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero h1 { font-size: 3.5rem; margin-bottom: 10px; text-transform: uppercase; }
+        .hero p { font-size: 1.2rem; margin-bottom: 20px; }
+
+        /* Products Grid */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-title { margin-bottom: 30px; border-left: 5px solid var(--primary); padding-left: 15px; }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .product-card:hover { transform: translateY(-10px); }
+
+        .product-img { width: 100%; height: 200px; object-fit: cover; }
+
+        .product-info { padding: 20px; }
+        .product-category { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+        .product-title { font-size: 1.2rem; margin: 5px 0; }
+        .product-price { color: var(--primary); font-weight: bold; font-size: 1.3rem; margin-bottom: 15px; }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .add-btn:hover { background: var(--primary); }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 350px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transition: 0.4s;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.active { right: 0; }
+
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .close-cart { cursor: pointer; font-size: 1.5rem; }
+
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+        .cart-item img { width: 60px; height: 60px; border-radius: 5px; object-fit: cover; }
+
+        .order-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">REVVROOM</div>
+        <ul class="nav-links">
+            <li><a href="#">Bikes</a></li>
+            <li><a href="#">Cars</a></li>
+            <li><a href="#">Gear</a></li>
+            <li><a href="#">Parts</a></li>
+        </ul>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Master the Road</h1>
+        <p>Premium Bikes, Cars, and Performance Gear for the Modern Rider.</p>
+    </header>
+
+    <main class="container">
+        <h2 class="section-title">Trending Now</h2>
+        <div class="products-grid" id="product-list">
+            </div>
+    </main>
+
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Garage (Cart)</h3>
+            <span class="close-cart" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cart-items">
+            </div>
+        <div id="cart-total" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem;">Total: $0</div>
+        <button class="order-btn" onclick="placeOrder()">PLACE ORDER NOW</button>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Carbon X Helmet", price: 299, category: "Riding Gear", img: "https://images.unsplash.com/photo-1595348020949-87cdfbb44174?auto=format&fit=crop&w=500&q=60" },
+            { id: 2, name: "Street Fighter Bike", price: 12500, category: "Bikes", img: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=500&q=60" },
+            { id: 3, name: "Leather Racing Jacket", price: 450, category: "Riding Gear", img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=500&q=60" },
+            { id: 4, name: "Off-Road Fog Lights", price: 120, category: "Accessories", img: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=500&q=60" },
+            { id: 5, name: "Performance Exhaust", price: 850, category: "Parts", img: "https://images.unsplash.com/photo-1611821064430-0d40291d0f0b?auto=format&fit=crop&w=500&q=60" },
+            { id: 6, name: "Steering Wheel Pro", price: 350, category: "Car Interior", img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=500&q=60" }
+        ];
+
+        let cart = [];
+
+        function displayProducts() {
+            const list = document.getElementById('product-list');
+            list.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.img}" class="product-img" alt="${p.name}">
+                    <div class="product-info">
+                        <span class="product-category">${p.category}</span>
+                        <h3 class="product-title">${p.name}</h3>
+                        <p class="product-price">$${p.price.toLocaleString()}</p>
+                        <button class="add-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('active');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateCartUI();
+            // Show feedback
+            const btn = event.target;
+            btn.innerText = "Added!";
+            btn.style.background = "#28a745";
+            setTimeout(() => {
+                btn.innerText = "Add to Cart";
+                btn.style.background = "#1a1a1a";
+            }, 1000);
+        }
+
+        function updateCartUI() {
+            const cartList = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+            
+            cartCount.innerText = cart.length;
+            
+            cartList.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <img src="${item.img}">
+                    <div>
+                        <p style="font-weight:bold">${item.name}</p>
+                        <p>$${item.price}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            cartTotal.innerText = `Total: $${total.toLocaleString()}`;
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            alert("Order Placed Successfully! Get ready for the ride of your life.");
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        // Initialize
+        displayProducts();
+    </script>
+</body>
+</html>
