@@ -29,7 +29,7 @@ pipeline {
                 echo "Running Docker container..."
                 sh '''
                 docker rm -f e-cart-container || true
-                docker run -d -p 8080:8080 --name e-cart-container e-cart
+                docker run -d -p 9090:8080 --name e-cart-container e-cart
                 '''
             }
         }
